@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tic Tac Toe</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .board { display: grid; grid-template-columns: repeat(3, 100px); gap: 5px; margin: 20px auto; width: 320px; }
+        .cell {
+            width: 100px; height: 100px; font-size: 2em;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid #333; cursor: pointer; background: #fafafa;
+        }
+        .cell.winner { background: #90ee90; }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board"></div>
+    <p id="status"></p>
+    <button onclick="resetGame()">Restart</button>
+    <script>
+        const board = document.getElementById('board');
+        const status = document.getElementById('status');
+        let cells = Array(9).fill(null);
+        let xTurn = true;
+        let gameOver = false;
+
+        function render() {
+            board.innerHTML = '';
+            cells.forEach((cell, i) => {
+                const div = document.createElement('div');
+                div.className = 'cell';
+                div.textContent = cell || '';
+                div.onclick = () => handleClick(i);
+                board.appendChild(div);
+            });
+            status.textContent = gameOver ? (getWinner() ? `Winner: ${getWinner()}` : "It's a draw!") : `Turn: ${xTurn ? 'X' : 'O'}`;
+        }
+
+        function handleClick(i) {
+            if (cells[i] || gameOver) return;
+            cells[i] = xTurn ? 'X' : 'O';
+            if (getWinner() || cells.every(cell => cell)) gameOver = true;
+            xTurn = !xTurn;
+            render();
+        }
+
+        function getWinner() {
+            const wins = [
+                [0,1,2],[3,4,5],[6,7,8],
+                [0,3,6],[1,4,7],[2,5,8],
+                [0,4,8],[2,4,6]
+            ];
+            for (const [a,b,c] of wins) {
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) return cells[a];
+            }
+            return null;
+        }
+
+        function resetGame() {
+            cells = Array(9).fill(null);
+            xTurn = true;
+            gameOver = false;
+            render();
+        }
+
+        render();
+    </script>
+</body>
+</html>
